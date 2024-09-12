@@ -12,5 +12,7 @@ const employeeController = new EmployeeController(employeeService);
 const router = express.Router()
 
 router.route('/employee').post(employeeController.createNewEmployee.bind(employeeController))
+router.route('/employee').get(employeeController.getEmployees.bind(employeeController))
+router.route('/employees').get(employeeController.fiteredEmployeeBySkills.bind(employeeController))
 
 export default router;

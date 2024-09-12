@@ -16,4 +16,9 @@ export default class SkillRepository {
         const skill = await SkillModel.findOne({skillId})
         return skill;
     }
+
+    async getSkills(){
+        const skills = await SkillModel.find();
+        return skills;
+    }
 }

@@ -10,6 +10,7 @@ const skillService = new SkillService(skillRepository)
 const skillController = new SkillController(skillService)
 
 router.route('/skill').post(skillController.createNewSkill.bind(skillController))
+router.route('/skill').get(skillController.getskills.bind(skillController))
 
 
 export default router;
