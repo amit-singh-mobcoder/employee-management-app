@@ -1,17 +1,26 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
+import { AutoIncrementID } from '@typegoose/auto-increment'; 
 
-const skillSchema = new mongoose.Schema(
-    {
-        skillId:{
-            type:Number,
-            required: true,
-            unique: true,
-        },
-        name: {
-            type:String,
-            required: true,
-        }
-    }
-)
+interface ISkill extends Document {
+  skillId: number;
+  name: string;
+}
 
-export const SkillModel = mongoose.model('Skill', skillSchema);
+const skillSchema: Schema = new mongoose.Schema(
+  {
+    skillId: {
+      type: Number,
+      unique: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      uppercase:true
+    },
+  }
+);
+
+skillSchema.plugin(AutoIncrementID, { field: 'skillId', startAt: 1, incrementBy: 1, modelName: 'Skill' });
+
+export const SkillModel = mongoose.model<ISkill>('Skill', skillSchema);

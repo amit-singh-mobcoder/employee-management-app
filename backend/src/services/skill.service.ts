@@ -10,13 +10,18 @@ export default class SkillService {
         this.skillRepository = skillRepository;
     }
 
-    async addNewSkill(skillId: number, name: string){
+    async addNewSkill(name: string){
         
-        if(!skillId || !name){
-            throw new ApiError(400, 'All field are required')
+        if(!name){
+            throw new ApiError(400, 'skill name is required')
         }
 
-        const newSkill = await this.skillRepository.addSkill(skillId, name);
+        const existedSkill = await this.skillRepository.findSkillBySkillName(name.toUpperCase());
+        if(existedSkill){
+            throw new ApiError(409, 'Skill already exist')
+        }
+
+        const newSkill = await this.skillRepository.addSkill(name);
         return newSkill;
     }
 }

@@ -12,10 +12,9 @@ export default class SkillController {
 
     async createNewSkill(req: Request, res: Response, next: NextFunction){
         try {
-            const skillId = req.body.skillId;
             const skillName = req.body.name;
 
-            const skill = await this.skillService.addNewSkill(skillId, skillName);
+            const skill = await this.skillService.addNewSkill(skillName);
             return res.status(201).json(new ApiResponse(200, skill, 'New skill created successfully'))
         } catch (error) {
             next(error)

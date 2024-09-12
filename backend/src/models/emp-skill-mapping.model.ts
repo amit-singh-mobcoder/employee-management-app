@@ -1,6 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, {Schema, Document} from "mongoose";
 
-const employeeSkillMappingSchema = new mongoose.Schema(
+interface IEmpSkillMap extends Document {
+    empId:number;
+    skillId:number;
+}
+
+const employeeSkillMappingSchema: Schema = new mongoose.Schema(
     {
         empId:{
             type:Number,
@@ -13,4 +18,4 @@ const employeeSkillMappingSchema = new mongoose.Schema(
     }
 )
 
-export const EmpSkillMapModel = mongoose.model('emp-skill-mapping', employeeSkillMappingSchema)
+export const EmpSkillMapModel = mongoose.model<IEmpSkillMap>('emp-skill-mapping', employeeSkillMappingSchema)
