@@ -1,6 +1,8 @@
 import EmployeeService from "../services/employee.service";
 import { Request, Response, NextFunction } from "express";
 import { ApiResponse } from "../utils/api-response";
+import { HttpStatusCodes } from "../utils/http-status-codes";
+import { Messages } from "../utils/messages";
 
 export default class EmployeeController {
     public _employeeService:EmployeeService;
@@ -16,7 +18,7 @@ export default class EmployeeController {
             const skills = req.body.skills;
 
             const newEmployee = await this._employeeService.addNewEmp(name, email, skills);
-            return res.status(201).json(new ApiResponse(200, newEmployee, 'New employee created successfully'))
+            return res.status(HttpStatusCodes.CREATED).json(new ApiResponse(HttpStatusCodes.OK, newEmployee, Messages.EMPLOYEE.CREATE_SUCCESS))
         } catch (error) {
             next(error)
         }
@@ -25,14 +27,14 @@ export default class EmployeeController {
     async getEmployees(req:Request, res:Response, next:NextFunction){
         try {
             const employess = await this._employeeService.getEmployees();
-            return res.status(200).json(new ApiResponse(200, employess, 'employees list fetched successfully'))
+            return res.status(HttpStatusCodes.OK).json(new ApiResponse(HttpStatusCodes.OK, employess, Messages.EMPLOYEE.LIST_FETCHED))
 
         } catch (error) {
             next(error)
         }
     }
 
-    async fiteredEmployeeBySkills(req: Request, res:Response, next:NextFunction){
+    async filteredEmployeeBySkills(req: Request, res:Response, next:NextFunction){
         try {
             const queryParams = req.query;
     
@@ -52,9 +54,9 @@ export default class EmployeeController {
             }
 
             const employees = await this._employeeService.getEmployees();
-            const response = await this._employeeService.fiteredEmployeeBySkills(skillIds, employees);
+            const response = await this._employeeService.filteredEmployeeBySkills(skillIds, employees);
     
-            return res.status(200).json(new ApiResponse(200, response, 'Filtered employees by skills'));
+            return res.status(HttpStatusCodes.OK).json(new ApiResponse(HttpStatusCodes.OK, response, `Filtered ${Messages.EMPLOYEE.LIST_FETCHED}`));
     
         } catch (error) {
             next(error);

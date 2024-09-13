@@ -1,7 +1,8 @@
-import axios from "axios";
 import EmployeeRepository from "../repositories/employee.repository";
 import EmpSkillMapRepository from "../repositories/emp-skill-mapping.repository";
 import { ApiError } from "../utils/api-error";
+import { HttpStatusCodes } from "../utils/http-status-codes";
+import { Messages } from "../utils/messages";
 
 export default class EmployeeService {
     public _employeeRepository:EmployeeRepository;
@@ -15,13 +16,13 @@ export default class EmployeeService {
     async addNewEmp(name:string, email:string, skills:number[]){
         
         if(!name || !email || !skills ){
-            throw new ApiError(400, 'All fields are required, [name, email, skills]')
+            throw new ApiError(HttpStatusCodes.BAD_REQUEST, Messages.EMPLOYEE.MISSING_FIELDS)
         }
 
         let existedEmployee;
         existedEmployee = await this._employeeRepository.findEmployeeByEmail(email);
         if(existedEmployee){
-            throw new ApiError(409, 'Employee with this email already exist')
+            throw new ApiError(HttpStatusCodes.CONFLICT, Messages.EMPLOYEE.EMAIL_EXISTS)
         }
 
         const employee = await this._employeeRepository.addNewEmployee(name, email, skills);
@@ -35,35 +36,22 @@ export default class EmployeeService {
     }
 
     async getEmployees(){
-        const employess = await this._employeeRepository.getEmployees();
-        if(!employess){
-            throw new ApiError(503, 'error while get employees')
+        const employees = await this._employeeRepository.getEmployees();
+        if(!employees || employees.length === 0){
+            throw new ApiError(HttpStatusCodes.NOT_FOUND, Messages.EMPLOYEE.NOT_FOUND)
         }
-        return employess;
+        return employees;
     }
 
-    async fiteredEmployeeBySkills(skillIds:number[], employees:Array<any>){
-        const filteredEmployees = [];
+    async filteredEmployeeBySkills(skillIds: number[], employees: Array<any>) {
+        
+        const filteredEmployees = employees.filter(employee =>
+          skillIds.every(skillId => employee.skills.includes(skillId))
+        );
 
-        for(let i=0; i<skillIds.length; i++){
-            const skillID = skillIds[i];
-
-            for(let j=0; j<employees.length; j++){
-                const employee = employees[j];
-                const empSkill = employee.skills;
-
-                for(let k=0; k<empSkill.length; k++){
-
-                    if(empSkill[k] === skillID){
-                        console.log('employee skill: ',empSkill[k])
-
-                        filteredEmployees.push(employee)
-                    }
-                }
-            }
-        }
-
-        return filteredEmployees;     
+        return filteredEmployees;
     }
+
+    
 
 }
