@@ -1,5 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { AutoIncrementID } from '@typegoose/auto-increment'; 
+import mongooseSequence from 'mongoose-sequence';
+
+const AutoIncrement = mongooseSequence(mongoose);
 
 interface ISkill extends Document {
   skillId: number;
@@ -8,19 +10,15 @@ interface ISkill extends Document {
 
 const skillSchema: Schema = new mongoose.Schema(
   {
-    skillId: {
-      type: Number,
-      unique: true,
-    },
     name: {
       type: String,
       required: true,
       unique: true,
-      uppercase:true
+      uppercase: true,
     },
   }
 );
 
-skillSchema.plugin(AutoIncrementID, { field: 'skillId', startAt: 1, incrementBy: 1, modelName: 'Skill' });
+skillSchema.plugin(AutoIncrement, {inc_field:'skillId'})
 
 export const SkillModel = mongoose.model<ISkill>('Skill', skillSchema);

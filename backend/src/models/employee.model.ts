@@ -1,4 +1,7 @@
 import mongoose, {Schema, Document} from "mongoose";
+import mongooseSequence from "mongoose-sequence";
+
+const AutoIncrement = mongooseSequence(mongoose)
 
 interface IEmployee extends Document {
     empId:number;
@@ -10,11 +13,6 @@ interface IEmployee extends Document {
 
 const employeeSchema: Schema = new mongoose.Schema(
     {
-        empId:{
-            type:Number,
-            required: true,
-            unique:true,
-        },
         name:{
             type:String,
             required: true,
@@ -35,6 +33,8 @@ const employeeSchema: Schema = new mongoose.Schema(
     },
     {timestamps: true}
 )
+
+employeeSchema.plugin(AutoIncrement, {inc_field: 'empId'})
 
 employeeSchema.index({ email: 1})
 employeeSchema.index({ empId: 1})

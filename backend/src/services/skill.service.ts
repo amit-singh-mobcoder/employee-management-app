@@ -24,4 +24,9 @@ export default class SkillService {
         const newSkill = await this.skillRepository.addSkill(name);
         return newSkill;
     }
+
+    async getSkills(){
+        const skills = await this.skillRepository.getSkills();
+        return skills;
+    }
 }

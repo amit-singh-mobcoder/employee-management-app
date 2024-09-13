@@ -20,4 +20,13 @@ export default class SkillController {
             next(error)
         }
     }
+
+    async getskills(req:Request, res:Response, next:NextFunction){
+        try {
+            const skills = await this.skillService.getSkills();
+            return res.status(200).json(new ApiResponse(200, skills, 'skills list fetched successfully'))
+        } catch (error) {
+            next(error)
+        }
+    }
 }
