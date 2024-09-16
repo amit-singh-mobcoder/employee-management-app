@@ -62,4 +62,13 @@ export default class EmployeeController {
             next(error);
         }
     }
+
+    async getEmployeesWithSkillName(req: Request, res: Response, next: NextFunction){
+        try {
+            const response = await this._employeeService.getEmployeesWithSkillName();
+            return res.status(HttpStatusCodes.OK).json(new ApiResponse(HttpStatusCodes.OK, response, Messages.EMPLOYEE.LIST_FETCHED))
+        } catch (error) {
+            next(error)
+        }
+    }
 }

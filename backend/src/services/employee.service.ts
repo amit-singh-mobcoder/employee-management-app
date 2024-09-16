@@ -3,14 +3,17 @@ import EmpSkillMapRepository from "../repositories/emp-skill-mapping.repository"
 import { ApiError } from "../utils/api-error";
 import { HttpStatusCodes } from "../utils/http-status-codes";
 import { Messages } from "../utils/messages";
+import SkillRepository from "../repositories/skill.repository";
 
 export default class EmployeeService {
     public _employeeRepository:EmployeeRepository;
     public _empSkillMapRepository:EmpSkillMapRepository;
+    public _skillRepository:SkillRepository;
 
-    constructor(employeeRepository: EmployeeRepository, empSkillMapRepository: EmpSkillMapRepository){
+    constructor(employeeRepository: EmployeeRepository, empSkillMapRepository: EmpSkillMapRepository, skillRepository: SkillRepository){
         this._employeeRepository = employeeRepository;
         this._empSkillMapRepository = empSkillMapRepository;
+        this._skillRepository = skillRepository;
     }
 
     async addNewEmp(name:string, email:string, skills:number[]){
@@ -49,8 +52,49 @@ export default class EmployeeService {
           skillIds.every(skillId => employee.skills.includes(skillId))
         );
 
-        return filteredEmployees;
+        const skillsList = await this._skillRepository.getSkills();
+        const skillMap = new Map(skillsList.map(skill => [skill.skillId, skill.name]));
+
+        const result = filteredEmployees.map(emp => {
+            const empSkills = emp.skills.map((skillId: number) => skillMap.get(skillId) || 'Unknown Skill');
+
+            return {
+                name: emp.name,
+                email: emp.email,
+                skills: empSkills,
+                isDeleted: emp.isDeleted,
+                _id: emp._id,
+                empId: emp.empId
+            };
+
+        })
+
+        return result;
     }
+
+    async getEmployeesWithSkillName() {
+        const employeesList = await this._employeeRepository.getEmployees();
+        const skillsList = await this._skillRepository.getSkills();
+    
+        // Skill lookup map for efficient access
+        const skillMap = new Map(skillsList.map(skill => [skill.skillId, skill.name]));
+    
+        const result = employeesList.map(emp => {
+            const empSkills = emp.skills.map(skillId => skillMap.get(skillId) || 'Unknown Skill');
+    
+            return {
+                name: emp.name,
+                email: emp.email,
+                skills: empSkills,
+                isDeleted: emp.isDeleted,
+                _id: emp._id,
+                empId: emp.empId
+            };
+        });
+    
+        return result;
+    }
+    
 
     
 
