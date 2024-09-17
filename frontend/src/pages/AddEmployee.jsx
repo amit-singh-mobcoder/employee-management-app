@@ -63,12 +63,14 @@ function AddEmployee() {
             autoComplete="off"
           >
             <TextField
+              
               id="name"
               label="Name"
               variant="outlined"
               value={name}
               onChange={(e) => setName(e.target.value)}
               fullWidth
+              required
             />
             <TextField
               id="email"
@@ -77,6 +79,7 @@ function AddEmployee() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               fullWidth
+              required
             />
           </Box>
 

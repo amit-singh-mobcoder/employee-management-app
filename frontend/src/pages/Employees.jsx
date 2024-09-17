@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import TuneIcon from "@mui/icons-material/Tune";
+import { EmployeeContext } from "../context/EmployeeContext";
+import Popup from "../components/Popup";
+
 
 function Employees() {
-  const [employeesList, setEmployeesList] = useState([]);
+  const { employeesList, setEmployeesList } = useContext(EmployeeContext);
   const [isLoading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchEmployeesList = async () => {
@@ -33,6 +37,7 @@ function Employees() {
       <div className="flex-1 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="overflow-x-auto shadow-md rounded-lg bg-white dark:bg-gray-800">
+            {showModal && <Popup onClose={() => setShowModal(false)} />}
             <table className="min-w-full text-left text-sm font-light">
               <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
@@ -51,8 +56,14 @@ function Employees() {
                   <th scope="col" className="px-6 py-3 border-b font-semibold">
                     {/* <Modal/> */}
                     <div className="flex items-center gap-2 border rounded px-2 py-1 hover:border-indigo-500 duration-200 cursor-pointer">
-                      <TuneIcon className="text-gray-500 hover:text-indigo-500" />
-                      <button className="text-sm font-medium text-gray-700 hover:text-indigo-500 focus:outline-none">
+                      <TuneIcon
+                        className="text-gray-500 hover:text-indigo-500"
+                        onClick={() => setShowModal(true)}
+                      />
+                      <button
+                        className="text-sm font-medium text-gray-700 hover:text-indigo-500 focus:outline-none"
+                        onClick={() => setShowModal(true)}
+                      >
                         Filters
                       </button>
                     </div>
@@ -104,7 +115,11 @@ function Employees() {
                 )}
               </tbody>
             </table>
+
+            
           </div>
+          {/* Pagination */}
+          
         </div>
       </div>
     </div>
