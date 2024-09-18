@@ -4,7 +4,8 @@ import axios from "axios";
 import TuneIcon from "@mui/icons-material/Tune";
 import { EmployeeContext } from "../context/EmployeeContext";
 import Popup from "../components/Popup";
-
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 function Employees() {
   const { employeesList, setEmployeesList } = useContext(EmployeeContext);
@@ -27,6 +28,20 @@ function Employees() {
 
     fetchEmployeesList();
   }, []);
+
+  /**
+   * Pagination logic
+   */
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = employeesList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -54,7 +69,6 @@ function Employees() {
                     Skills
                   </th>
                   <th scope="col" className="px-6 py-3 border-b font-semibold">
-                    {/* <Modal/> */}
                     <div className="flex items-center gap-2 border rounded px-2 py-1 hover:border-indigo-500 duration-200 cursor-pointer">
                       <TuneIcon
                         className="text-gray-500 hover:text-indigo-500"
@@ -73,18 +87,18 @@ function Employees() {
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan="4" className="text-center px-6 py-4">
+                    <td colSpan="5" className="text-center px-6 py-4">
                       Loading...
                     </td>
                   </tr>
-                ) : employeesList.length > 0 ? (
-                  employeesList.map((employee, index) => (
+                ) : currentData.length > 0 ? (
+                  currentData.map((employee, index) => (
                     <tr
                       key={index}
                       className="border-b hover:bg-gray-50 dark:hover:bg-gray-600"
                     >
                       <td className="whitespace-nowrap px-6 py-4 font-medium">
-                        {index + 1}
+                        {indexOfFirstItem + index + 1} {/* Adjusted index */}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         {employee.name}
@@ -108,18 +122,27 @@ function Employees() {
                   ))
                 ) : (
                   <tr>
-                    <td className="px-6 py-4 text-center" colSpan="4">
+                    <td className="px-6 py-4 text-center" colSpan="5">
                       No employees found.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
-
-            
           </div>
           {/* Pagination */}
-          
+          <div className="flex items-center justify-center mt-10">
+            <Stack spacing={2}>
+              <Pagination
+                count={Math.ceil(employeesList.length / itemsPerPage)} // Total pages
+                page={currentPage}
+                onChange={handlePageChange}
+                variant="outlined"
+                shape="rounded"
+                color="primary"
+              />
+            </Stack>
+          </div>
         </div>
       </div>
     </div>
