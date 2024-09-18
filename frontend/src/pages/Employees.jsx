@@ -6,6 +6,7 @@ import { EmployeeContext } from "../context/EmployeeContext";
 import Popup from "../components/Popup";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { CircleCheck, CircleAlert } from 'lucide-react';
 
 function Employees() {
   const { employeesList, setEmployeesList } = useContext(EmployeeContext);
@@ -18,6 +19,7 @@ function Employees() {
         const response = await axios.get(
           "http://localhost:8000/api/employees/skills"
         );
+        console.log(response.data.data);
         setEmployeesList(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -51,8 +53,26 @@ function Employees() {
       {/* Main Content */}
       <div className="flex-1 p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="overflow-x-auto shadow-md rounded-lg bg-white dark:bg-gray-800">
+          {/* Filter Button */}
+          <div className="flex justify-end">
+            <div className="flex items-center gap-2 border rounded-lg px-2 py-1 hover:border-indigo-500 duration-200 cursor-pointer">
+              <TuneIcon
+                className="text-gray-500 hover:text-indigo-500"
+                onClick={() => setShowModal(true)}
+              />
+              <button
+                className="text-sm font-medium text-gray-700 hover:text-indigo-500 focus:outline-none"
+                onClick={() => setShowModal(true)}
+              >
+                Filters
+              </button>
+            </div>
+          </div>
+
+          {/* Table content */}
+          <div className="overflow-x-auto shadow-md rounded-lg bg-white dark:bg-gray-800 mt-2">
             {showModal && <Popup onClose={() => setShowModal(false)} />}
+
             <table className="min-w-full text-left text-sm font-light">
               <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
@@ -69,18 +89,10 @@ function Employees() {
                     Skills
                   </th>
                   <th scope="col" className="px-6 py-3 border-b font-semibold">
-                    <div className="flex items-center gap-2 border rounded px-2 py-1 hover:border-indigo-500 duration-200 cursor-pointer">
-                      <TuneIcon
-                        className="text-gray-500 hover:text-indigo-500"
-                        onClick={() => setShowModal(true)}
-                      />
-                      <button
-                        className="text-sm font-medium text-gray-700 hover:text-indigo-500 focus:outline-none"
-                        onClick={() => setShowModal(true)}
-                      >
-                        Filters
-                      </button>
-                    </div>
+                    Status
+                  </th>
+                  <th scope="col" className="px-6 py-3 border-b font-semibold">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -117,6 +129,33 @@ function Employees() {
                             </span>
                           ))}
                         </div>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        {employee.isDeleted ? (
+                          <div className="flex gap-2 justify-center items-center">
+                            <CircleAlert color="white" className="bg-red-500 rounded-full"/>
+                            <p>Inactive</p>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2 justify-center items-center">
+                            <CircleCheck color="white" className="bg-green-500 rounded-full"/>
+                            <p>Active</p>
+                          </div>
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        {employee.isDeleted ? (
+                          <button>Respawn</button>
+                        ) : (
+                          <div className="flex gap-2">
+                            <button className="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg">
+                              Edit
+                            </button>
+                            <button className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg">
+                              Delete
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
