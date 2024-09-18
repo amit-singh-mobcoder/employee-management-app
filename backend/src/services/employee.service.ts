@@ -1,5 +1,4 @@
 import EmployeeRepository from "../repositories/employee.repository";
-import EmpSkillMapRepository from "../repositories/emp-skill-mapping.repository";
 import { ApiError } from "../utils/api-error";
 import { HttpStatusCodes } from "../utils/http-status-codes";
 import { Messages } from "../utils/messages";
@@ -7,12 +6,10 @@ import SkillRepository from "../repositories/skill.repository";
 
 export default class EmployeeService {
     public _employeeRepository:EmployeeRepository;
-    public _empSkillMapRepository:EmpSkillMapRepository;
     public _skillRepository:SkillRepository;
 
-    constructor(employeeRepository: EmployeeRepository, empSkillMapRepository: EmpSkillMapRepository, skillRepository: SkillRepository){
+    constructor(employeeRepository: EmployeeRepository, skillRepository: SkillRepository){
         this._employeeRepository = employeeRepository;
-        this._empSkillMapRepository = empSkillMapRepository;
         this._skillRepository = skillRepository;
     }
 
@@ -28,14 +25,8 @@ export default class EmployeeService {
             throw new ApiError(HttpStatusCodes.CONFLICT, Messages.EMPLOYEE.EMAIL_EXISTS)
         }
 
-        const employee = await this._employeeRepository.addNewEmployee(name, email, skills);
-
-
-        const skillMappings = skills.map(skillId => this._empSkillMapRepository.addNewMapping(employee.empId, skillId));
-        await Promise.all(skillMappings);
-        
+        const employee = await this._employeeRepository.addNewEmployee(name, email, skills);    
         return employee;
-
     }
 
     async getEmployees(){

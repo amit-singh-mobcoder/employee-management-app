@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { EmployeeModel } from "../models/employee.model";
 
 export default class EmployeeRepository{
