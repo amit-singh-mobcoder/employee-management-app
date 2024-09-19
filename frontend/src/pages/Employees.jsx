@@ -6,12 +6,22 @@ import { EmployeeContext } from "../context/EmployeeContext";
 import Popup from "../components/Popup";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { CircleCheck, CircleAlert } from 'lucide-react';
+import { CircleCheck, CircleAlert, Pencil } from "lucide-react";
+import UpdateEmployee from "./UpdateEmployee";
 
 function Employees() {
   const { employeesList, setEmployeesList } = useContext(EmployeeContext);
   const [isLoading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  // to send employee details on the updateEmployeePage
+  const [empDetails, setEmpDetails] = useState({
+    id: "",
+    name: "",
+    email: "",
+    skills: [],
+  });
 
   useEffect(() => {
     const fetchEmployeesList = async () => {
@@ -72,6 +82,12 @@ function Employees() {
           {/* Table content */}
           <div className="overflow-x-auto shadow-md rounded-lg bg-white dark:bg-gray-800 mt-2">
             {showModal && <Popup onClose={() => setShowModal(false)} />}
+            {showUpdateModal && (
+              <UpdateEmployee
+                employee={empDetails}
+                onClose={() => setShowUpdateModal(false)}
+              />
+            )}
 
             <table className="min-w-full text-left text-sm font-light">
               <thead className="bg-gray-100 dark:bg-gray-700">
@@ -119,8 +135,9 @@ function Employees() {
                         {employee.email}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex gap-2 flex-wrap">
-                          {employee.skills.map((skill, idx) => (
+                        <div className="flex gap-2 flex-wrap items-center justify-start">
+                          {/* Show first 3 skills */}
+                          {employee.skills.slice(0, 3).map((skill, idx) => (
                             <span
                               key={idx}
                               className="border border-indigo-500 text-indigo-500 rounded-full px-3 py-1 text-xs"
@@ -128,30 +145,71 @@ function Employees() {
                               {skill}
                             </span>
                           ))}
+
+                          {/* View More' if there are more than 3 skills */}
+                          {employee.skills.length > 3 && (
+                            <div className="relative group">
+                              <span className="border text-indigo-500 rounded-full px-3 py-1 text-xs cursor-pointer">
+                                More
+                              </span>
+
+                              {/* remaining skills on hover */}
+                              <div className="absolute hidden group-hover:flex gap-4 bg-white border border-indigo-500 rounded-full p-2 shadow-lg top-full left-0 mt-1 z-10">
+                                {employee.skills.slice(3).map((skill, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="text-indigo-500 text-xs"
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </td>
+
                       <td className="whitespace-nowrap px-6 py-4">
+                        {/* To show employee active or Inactive status */}
                         {employee.isDeleted ? (
-                          <div className="flex gap-2 justify-center items-center">
-                            <CircleAlert color="white" className="bg-red-500 rounded-full"/>
+                          <div className="flex gap-2 justify-start items-center">
+                            <CircleAlert
+                              color="white"
+                              className="bg-red-500 rounded-full"
+                            />
                             <p>Inactive</p>
                           </div>
                         ) : (
-                          <div className="flex gap-2 justify-center items-center">
-                            <CircleCheck color="white" className="bg-green-500 rounded-full"/>
+                          <div className="flex gap-2 justify-start items-center">
+                            <CircleCheck
+                              color="white"
+                              className="bg-green-500 rounded-full"
+                            />
                             <p>Active</p>
                           </div>
                         )}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
+                        {/* employee edit and delete button */}
                         {employee.isDeleted ? (
                           <button>Respawn</button>
                         ) : (
-                          <div className="flex gap-2">
-                            <button className="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg">
+                          <div className="flex gap-2 justify-start">
+                            <button
+                              className="px-4 py-2 bg-yellow-500 text-white text-xs font-semibold rounded-lg"
+                              onClick={() => {
+                                setShowUpdateModal(true),
+                                  setEmpDetails({
+                                    id: employee._id,
+                                    name: employee.name,
+                                    email: employee.email,
+                                    skills: employee.skills,
+                                  });
+                              }}
+                            >
                               Edit
                             </button>
-                            <button className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg">
+                            <button className="px-4 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg">
                               Delete
                             </button>
                           </div>

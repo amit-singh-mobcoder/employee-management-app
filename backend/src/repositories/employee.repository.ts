@@ -26,4 +26,18 @@ export default class EmployeeRepository{
         const employees = await EmployeeModel.find();
         return employees;
     }
+
+    async findEmployeeByObjectIdAndUpdate(id: string, newDetails: {name: string, email:string, skills: number[]}){
+        const updatedEmployee = await EmployeeModel.findByIdAndUpdate(id, {$set: {
+            name: newDetails.name,
+            email: newDetails.email,
+            skills: newDetails.skills
+        }}, {new: true})
+        return updatedEmployee;
+    }
+
+    async findEmployeeById(id: string){
+        const employee = await EmployeeModel.findById(id);
+        return employee;
+    }
 }

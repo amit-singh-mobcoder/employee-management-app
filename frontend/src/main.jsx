@@ -8,6 +8,7 @@ import Employees from "./pages/Employees.jsx";
 import AddEmployee from "./pages/AddEmployee.jsx";
 import { EmployeeProvider } from "./context/EmployeeContext.jsx";
 import { PrevSelectedSkillProvider } from "./context/PrevSelectedSkill.jsx";
+import PageNotFound from "./pages/PageNotFound.jsx";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -18,6 +19,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/" element={<Dashboard />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/addemployee" element={<AddEmployee />} />
+            <Route path="*" element={<PageNotFound/>} />
           </Routes>
         </BrowserRouter>
       </PrevSelectedSkillProvider>

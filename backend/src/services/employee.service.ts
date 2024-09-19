@@ -3,6 +3,7 @@ import { ApiError } from "../utils/api-error";
 import { HttpStatusCodes } from "../utils/http-status-codes";
 import { Messages } from "../utils/messages";
 import SkillRepository from "../repositories/skill.repository";
+import { isValidObjectId } from "mongoose";
 
 export default class EmployeeService {
     public _employeeRepository:EmployeeRepository;
@@ -84,6 +85,33 @@ export default class EmployeeService {
         });
     
         return result;
+    }
+
+    async updateEmployee(id: string, name:string, email:string, skills:number[]){
+
+        if(!id){
+            throw new ApiError(HttpStatusCodes.BAD_REQUEST, Messages.GENERIC.BAD_REQUEST)
+        }
+        if(!name || !email || !skills){
+            throw new ApiError(HttpStatusCodes.BAD_REQUEST, Messages.EMPLOYEE.MISSING_FIELDS)
+        }
+
+        if(!(isValidObjectId(id))){
+            throw new ApiError(HttpStatusCodes.BAD_REQUEST, Messages.GENERIC.BAD_REQUEST)
+        }
+
+        const employee = await this._employeeRepository.findEmployeeById(id);
+        if(!employee){
+            throw new ApiError(HttpStatusCodes.NOT_FOUND, Messages.EMPLOYEE.NOT_FOUND)
+        }
+
+        const newDetails = {name, email, skills}
+        const updatedEmployee = await this._employeeRepository.findEmployeeByObjectIdAndUpdate(id, newDetails);
+        if(!updatedEmployee){
+            throw new ApiError(HttpStatusCodes.BAD_REQUEST, Messages.DATABASE.UPDATE_FAILED)
+        }
+
+        return updatedEmployee;
     }
     
 

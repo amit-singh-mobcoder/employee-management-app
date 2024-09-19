@@ -71,4 +71,15 @@ export default class EmployeeController {
             next(error)
         }
     }
+
+    async updateEmployee(req:Request, res:Response, next:NextFunction){
+        try {
+            const {id} = req.params;
+            const {name, email, skills} = req.body;
+            const updatedEmployee = await this._employeeService.updateEmployee(id, name, email, skills);
+            return res.status(HttpStatusCodes.OK).json(new ApiResponse(HttpStatusCodes.OK, updatedEmployee, Messages.EMPLOYEE.UPDATE_SUCCESS))
+        } catch (error) {
+            next(error)
+        }
+    }
 }
