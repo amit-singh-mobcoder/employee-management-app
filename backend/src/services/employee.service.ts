@@ -83,8 +83,9 @@ export default class EmployeeService {
                 empId: emp.empId
             };
         });
-    
-        return result;
+        
+        const response = result.filter(emp => emp.isDeleted !== true); 
+        return response;
     }
 
     async updateEmployee(id: string, name:string, email:string, skills:number[]){
@@ -112,6 +113,21 @@ export default class EmployeeService {
         }
 
         return updatedEmployee;
+    }
+
+    // soft delete
+    async deleteEmployee(id: string) {
+        if(!id || !(isValidObjectId(id))){
+            throw new ApiError(HttpStatusCodes.BAD_GATEWAY, Messages.GENERIC.BAD_REQUEST);
+        }
+
+        const employee = await this._employeeRepository.findEmployeeById(id);
+        if(!employee){
+            throw new ApiError(HttpStatusCodes.NOT_FOUND, Messages.EMPLOYEE.NOT_FOUND)
+        }
+
+        await this._employeeRepository.findEmpByIdAndSoftDelete(id);
+        return employee;
     }
     
 

@@ -16,5 +16,6 @@ router.route('/employee').get(employeeController.getEmployees.bind(employeeContr
 router.route('/employees').get(employeeController.filteredEmployeeBySkills.bind(employeeController))
 router.route('/employees/skills').get(employeeController.getEmployeesWithSkillName.bind(employeeController))
 router.route('/employee/:id').patch(employeeController.updateEmployee.bind(employeeController))
+router.route('/employee/:id').delete(employeeController.deleteEmployee.bind(employeeController))
 
 export default router;

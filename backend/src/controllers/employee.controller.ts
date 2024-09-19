@@ -82,4 +82,14 @@ export default class EmployeeController {
             next(error)
         }
     }
+
+    async deleteEmployee(req: Request, res:Response, next:NextFunction){
+        try {
+            const {id} = req.params;
+            const deletedEmployee = await this._employeeService.deleteEmployee(id);
+            return res.status(HttpStatusCodes.OK).json(new ApiResponse(HttpStatusCodes.NO_CONTENT,{}, Messages.EMPLOYEE.DELETE_SUCCESS))
+        } catch (error) {
+            next(error)
+        }
+    }
 }

@@ -40,4 +40,8 @@ export default class EmployeeRepository{
         const employee = await EmployeeModel.findById(id);
         return employee;
     }
+
+    async findEmpByIdAndSoftDelete(id: string){
+        await EmployeeModel.findByIdAndUpdate(id, {isDeleted: true})
+    }
 }
