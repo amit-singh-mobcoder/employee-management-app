@@ -56,8 +56,8 @@ function Popup({ onClose }) {
       }
 
       const response = await axios.get(`http://localhost:8000/api/employees?${customURL}`);
-      setEmployeesList(response.data.data);
-
+      const responseData = response.data.data;
+      setEmployeesList(responseData.filter((emp) => emp.isDeleted === false));
       setPrevSelectedSkill(selectedSkills);
       onClose();
 

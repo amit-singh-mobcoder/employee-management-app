@@ -31,22 +31,10 @@ function AddEmployee() {
     fetchSkills();
   }, []);
 
-  // const handleNameValidation = () => {
-  //   const namePattern = /^[A-Za-z\s'-]+$/;
-
-  //   if (name.trim() === "") {
-  //     setNameValidationError("Name is required");
-  //   } else if (!namePattern.test(name.trim())) {
-  //     setNameValidationError("Invalid Name");
-  //   } else {
-  //     setNameValidationError("");
-  //   }
-  // }
-
   const handleOnBlur = () => {
-    setNameValidationError("")
-    setEmailValidationError("")
-  }
+    setNameValidationError("");
+    setEmailValidationError("");
+  };
 
   const handleNameChange = (e) => {
     const val = e.target.value;
@@ -102,11 +90,22 @@ function AddEmployee() {
         );
         setSuccessMessage(response.data.message);
         setBackendError("");
+        handleAfterSubmit();
       } catch (error) {
         setBackendError(error.response.data.message);
         setSuccessMessage("");
       }
     }
+  };
+
+  const handleAfterSubmit = () => {
+    setName("");
+    setEmail("");
+    setSelectedSkills([]);
+
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 5000);
   };
 
   return (
