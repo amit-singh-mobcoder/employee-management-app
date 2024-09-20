@@ -83,9 +83,7 @@ export default class EmployeeService {
                 empId: emp.empId
             };
         });
-        
-        const response = result.filter(emp => emp.isDeleted !== true); 
-        return response;
+        return result;
     }
 
     async updateEmployee(id: string, name:string, email:string, skills:number[]){
@@ -129,8 +127,4 @@ export default class EmployeeService {
         await this._employeeRepository.findEmpByIdAndSoftDelete(id);
         return employee;
     }
-    
-
-    
-
 }

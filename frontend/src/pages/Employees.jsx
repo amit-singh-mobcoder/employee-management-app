@@ -6,22 +6,15 @@ import { EmployeeContext } from "../context/EmployeeContext";
 import Popup from "../components/Popup";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { CircleCheck, CircleAlert, Pencil } from "lucide-react";
 import UpdateEmployee from "./UpdateEmployee";
+import DeleteConfirm from "../components/DeleteConfirm";
 
 function Employees() {
   const { employeesList, setEmployeesList } = useContext(EmployeeContext);
   const [isLoading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-
-  // to send employee details on the updateEmployeePage
-  const [empDetails, setEmpDetails] = useState({
-    id: "",
-    name: "",
-    email: "",
-    skills: [],
-  });
+  const [showDeleteConfirmModal, setDeleteConfirmModel] = useState(false);
 
   useEffect(() => {
     const fetchEmployeesList = async () => {
@@ -30,7 +23,8 @@ function Employees() {
           "http://localhost:8000/api/employees/skills"
         );
         console.log(response.data.data);
-        setEmployeesList(response.data.data);
+        const responseData = response.data.data;
+        setEmployeesList(responseData.filter((emp) => emp.isDeleted === false));
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -40,6 +34,14 @@ function Employees() {
 
     fetchEmployeesList();
   }, []);
+
+  // to send employee details on the updateEmployee and delete confirm modal 
+  const [empDetails, setEmpDetails] = useState({
+    id: "",
+    name: "",
+    email: "",
+    skills: [],
+  });
 
   /**
    * Pagination logic
@@ -88,6 +90,12 @@ function Employees() {
                 onClose={() => setShowUpdateModal(false)}
               />
             )}
+            {showDeleteConfirmModal && (
+              <DeleteConfirm
+                employee={empDetails}
+                onClose={() => setDeleteConfirmModel(false)}
+              />
+            )}
 
             <table className="min-w-full text-left text-sm font-light">
               <thead className="bg-gray-100 dark:bg-gray-700">
@@ -103,9 +111,6 @@ function Employees() {
                   </th>
                   <th scope="col" className="px-6 py-3 border-b font-semibold">
                     Skills
-                  </th>
-                  <th scope="col" className="px-6 py-3 border-b font-semibold">
-                    Status
                   </th>
                   <th scope="col" className="px-6 py-3 border-b font-semibold">
                     Actions
@@ -170,29 +175,13 @@ function Employees() {
                       </td>
 
                       <td className="whitespace-nowrap px-6 py-4">
-                        {/* To show employee active or Inactive status */}
-                        {employee.isDeleted ? (
-                          <div className="flex gap-2 justify-start items-center">
-                            <CircleAlert
-                              color="white"
-                              className="bg-red-500 rounded-full"
-                            />
-                            <p>Inactive</p>
-                          </div>
-                        ) : (
-                          <div className="flex gap-2 justify-start items-center">
-                            <CircleCheck
-                              color="white"
-                              className="bg-green-500 rounded-full"
-                            />
-                            <p>Active</p>
-                          </div>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
                         {/* employee edit and delete button */}
                         {employee.isDeleted ? (
-                          <button>Respawn</button>
+                          // <button className="">Deleted</button>
+
+                          <span className="px-4 py-2 cursor-not-allowed  bg-gray-500 text-white text-xs font-semibold rounded-lg">
+                            Deleted
+                          </span>
                         ) : (
                           <div className="flex gap-2 justify-start">
                             <button
@@ -209,7 +198,18 @@ function Employees() {
                             >
                               Edit
                             </button>
-                            <button className="px-4 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg">
+                            <button
+                              onClick={() => {
+                                setDeleteConfirmModel(true),
+                                  setEmpDetails({
+                                    id: employee._id,
+                                    name: employee.name,
+                                    email: employee.email,
+                                    skills: employee.skills,
+                                  });
+                              }}
+                              className="px-4 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg"
+                            >
                               Delete
                             </button>
                           </div>

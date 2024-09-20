@@ -19,7 +19,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/" element={<Dashboard />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/addemployee" element={<AddEmployee />} />
-            <Route path="*" element={<PageNotFound/>} />
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
       </PrevSelectedSkillProvider>
