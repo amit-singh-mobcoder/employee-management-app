@@ -9,6 +9,7 @@ interface IEmployee extends Document {
     email:string;
     skills:number[];
     isDeleted:boolean;
+    status:string
 }
 
 const employeeSchema: Schema = new mongoose.Schema(
@@ -29,6 +30,11 @@ const employeeSchema: Schema = new mongoose.Schema(
         isDeleted:{
             type:Boolean,
             default: false
+        },
+        status: {
+            type:String,
+            enum:['active', 'inactive'],
+            default: 'active'
         }
     },
     {timestamps: true}
