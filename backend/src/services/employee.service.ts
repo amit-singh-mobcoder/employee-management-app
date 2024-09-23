@@ -56,7 +56,8 @@ export default class EmployeeService {
                 skills: empSkills,
                 isDeleted: emp.isDeleted,
                 _id: emp._id,
-                empId: emp.empId
+                empId: emp.empId,
+                status: emp?.status
             };
 
         })
@@ -80,7 +81,8 @@ export default class EmployeeService {
                 skills: empSkills,
                 isDeleted: emp.isDeleted,
                 _id: emp._id,
-                empId: emp.empId
+                empId: emp.empId,
+                status: emp?.status
             };
         });
         return result;
@@ -126,5 +128,30 @@ export default class EmployeeService {
 
         await this._employeeRepository.findEmpByIdAndSoftDelete(id);
         return employee;
+    }
+
+    async updateEmployeeStatus(requestObject: any){
+        const requestParams = requestObject.requestParams;
+        const id = requestParams.id;
+        
+        if(!id || !(isValidObjectId(id))){
+            throw new ApiError(HttpStatusCodes.BAD_REQUEST, Messages.GENERIC.BAD_REQUEST);
+        }
+
+        const employee = await this._employeeRepository.findEmployeeById(id);
+        if(!employee){
+            throw new ApiError(HttpStatusCodes.NOT_FOUND, Messages.EMPLOYEE.NOT_FOUND);
+        }
+
+        let updatedEmployee;
+        if(employee?.status === 'active'){
+            const newStatus = 'inactive'
+            updatedEmployee = await this._employeeRepository.findByIdAndUpdateStatus(id, newStatus);
+        }else {
+            const newStatus = 'active'
+            updatedEmployee = await this._employeeRepository.findByIdAndUpdateStatus(id, newStatus);
+        }
+
+        return updatedEmployee;
     }
 }

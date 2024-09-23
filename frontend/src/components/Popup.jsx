@@ -70,7 +70,7 @@ function Popup({ onClose }) {
     <div
       ref={popupRef}
       onClick={closePopup}
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-24"
+      className="fixed z-50 inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-24"
     >
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-8">
         {/* Close Button */}

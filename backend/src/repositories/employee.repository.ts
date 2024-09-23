@@ -44,4 +44,9 @@ export default class EmployeeRepository{
     async findEmpByIdAndSoftDelete(id: string){
         await EmployeeModel.findByIdAndUpdate(id, {isDeleted: true})
     }
+
+    async findByIdAndUpdateStatus(id: string, status: string){
+        const updatedEmployee = await EmployeeModel.findByIdAndUpdate(id, {status}, {new: true})
+        return updatedEmployee;
+    }
 }
