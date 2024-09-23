@@ -21,10 +21,10 @@ Create ```.env``` file inside ```backend``` directory
 # Run the App
 Go to ```backend``` and ```frontend``` directory and start the server
 ```
-cd client
+cd backend
 npm run dev
 ```
 ```
-cd server
+cd frontend
 npm run dev
 ```
